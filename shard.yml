@@ -1,0 +1,19 @@
+name: sports-deal-emailer
+version: 0.1.0
+
+authors:
+  - Kalmai <leozverres@gmail.com>
+
+targets:
+  sports-deal-emailer:
+    main: src/sports-deal-emailer.cr
+
+dependencies:
+  db:
+    github: crystal-lang/crystal-db
+  pg:
+    github: will/crystal-pg
+
+crystal: '>= 1.10.1'
+
+license: MIT
