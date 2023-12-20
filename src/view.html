@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>sports deal notifier</title>
+		<script>
+      function preventFormDefault() {
+        document.getElementById("bobby").addEventListener("click", function(event){
+          event.preventDefault()
+        });
+      }
+
+      function submitEmail() {
+        let newEmail = new FormData(document.querySelector("form"))
+        fetch("http://localhost:8080/register_email", {
+          method: "POST",
+          body: JSON.stringify(newEmail),
+          headers: {
+            "Content-type": "application/json; charset=UTF-8"
+          }
+        });
+      }
+    </script>
+  </head>
+  <body onload=preventFormDefault()>
+		hi mom
+    <form>
+      <label for="email">email:</label><br>
+      <input type="text" id="email" name="email"><br>
+      <input type="submit" value="Submit" id="bobby" onClick=submitEmail()>
+    </form>
+  </body>
+</html>

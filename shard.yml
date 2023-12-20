@@ -13,6 +13,8 @@ dependencies:
     github: crystal-lang/crystal-db
   pg:
     github: will/crystal-pg
+  kemal:
+    github: kemalcr/kemal
 
 crystal: '>= 1.10.1'
 
