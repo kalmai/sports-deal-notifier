@@ -11,9 +11,15 @@ module Database
     # that has an contact method
     #   contact method (email text UNIQUE, frequency integer) # it might be a good idea to avoid frequency for now
     #     in the future we may want to support sms (mobile_number varchar[10] UNIQUE, frequency integer)
+    #       in all of these instances we want to return a success from our server to mask data we already have
     # that has a region
     #   region has a zip code
+    # i want to use email for now to collect user contact info and then we can save the the zipcode
+    # they give us and lookup via this handy api
+    db.exec "drop table emails"
     db.exec "create table if not exists emails (email text UNIQUE, frequency integer)"
+    db.exec "create table if not exists zip_code_teams"
+    # we should have a table with all the teams maybe at some point versus
     puts "dev database created"
     # db.exec "insert into emails values ($1)", "leozverres2@gmail.com"
     # refer to https://github.com/crystal-lang/crystal-db#usage for further information
@@ -21,16 +27,19 @@ module Database
 
   def execute(**args)
     DB.open(DATABASE_CONNECTION) do |db|
-      db.exec(args)
+      db.transaction do |tx|
+        cnn = tx.connection
+        cnn.exec(args[:query], *args[:params])
+      end
     end
   end
 
-  def query(query)
+  # if there are no positional args for your prepared sql query, you need
+  # to call `Tuple.new` in order to instantiate an empty Tuple to be able to call
+  # the below method
+  def query(**args)
     DB.open(DATABASE_CONNECTION) do |db|
-      rs = db.query(query)
-      rs.each do
-        puts "email: #{rs.read}"
-      end
+      args[:args] ? db.query(args[:query], *args[:params]) : db.query(args[:query])
     end
   end
 end

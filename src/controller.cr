@@ -18,6 +18,15 @@ module Controller
     end
   end
 
+  def register_email(context)
+    body = context.request.body.try(&.gets_to_end)
+    request_hash = Hash(String, String).from_json(body.to_s)
+    Database.execute(
+      query: "insert into emails (email, frequency) values ($1, $2)",
+      params: { request_hash["email"], 0 }
+    )
+  end
+
   def root(context)
     filename = "./src/view.html"
     context.response.content_type = "text/html"
@@ -25,12 +34,5 @@ module Controller
     File.open(filename) do |file|
       IO.copy(file, context.response)
     end
-  end
-
-  def register_email(context)
-    body = context.request.body.try(&.gets_to_end)
-    request_hash = Hash(String, String).from_json(body.to_s)
-    Database.execute(query: "insert into emails values ('$1')", args: request_hash["email"])
-    Database.query("select * from emails")
   end
 end
