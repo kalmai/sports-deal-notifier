@@ -4,7 +4,7 @@ require "pg"
 module Database
   extend self
 
-  DATABASE_CONNECTION = "postgres://postgres:postgres@localhost:5432/sports_deal_emailer_dev"
+  DATABASE_CONNECTION = database_connection
 
   DB.open(DATABASE_CONNECTION) do |db|
     # we have a user,
@@ -18,9 +18,9 @@ module Database
     # they give us and lookup via this handy api
     db.exec "drop table emails"
     db.exec "create table if not exists emails (email text UNIQUE, frequency integer)"
-    db.exec "create table if not exists zip_code_teams"
+    # db.exec "create table if not exists zip_code_teams"
     # we should have a table with all the teams maybe at some point versus
-    puts "dev database created"
+    puts "database created for '#{ENV.fetch("ENVIRONMENT")}'"
     # db.exec "insert into emails values ($1)", "leozverres2@gmail.com"
     # refer to https://github.com/crystal-lang/crystal-db#usage for further information
   end
@@ -41,5 +41,9 @@ module Database
     DB.open(DATABASE_CONNECTION) do |db|
       args[:args] ? db.query(args[:query], *args[:params]) : db.query(args[:query])
     end
+  end
+
+  def database_connection
+    "postgres://#{ENV.fetch("PG_USER")}:#{ENV.fetch("PG_PASSWORD")}@#{ENV.fetch("PG_HOST")}:#{ENV.fetch("PG_PORT")}/#{ENV.fetch("PG_DB_NAME")}"
   end
 end

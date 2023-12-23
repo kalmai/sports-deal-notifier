@@ -1,5 +1,5 @@
+require "./initializer"
 require "http/server"
-require "./database"
 require "./controller"
 
 module Sports::Deal::Emailer

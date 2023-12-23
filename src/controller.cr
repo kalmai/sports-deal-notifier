@@ -1,5 +1,3 @@
-require "json"
-require "./controller"
 require "./database"
 
 module Controller

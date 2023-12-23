@@ -2,7 +2,7 @@ name: sports-deal-emailer
 version: 0.1.0
 
 authors:
-  - Kalmai <leozverres@gmail.com>
+  - Kalmai <https://github.com/kalmai>
 
 targets:
   sports-deal-emailer:
@@ -13,8 +13,6 @@ dependencies:
     github: crystal-lang/crystal-db
   pg:
     github: will/crystal-pg
-  kemal:
-    github: kemalcr/kemal
 
 crystal: '>= 1.10.1'
 
