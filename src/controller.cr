@@ -1,5 +1,3 @@
-require "./database"
-
 module Controller
   extend self
 
@@ -19,9 +17,9 @@ module Controller
   def register_email(context)
     body = context.request.body.try(&.gets_to_end)
     request_hash = Hash(String, String).from_json(body.to_s)
-    Database.execute(
-      query: "insert into emails (email, frequency) values ($1, $2)",
-      params: { request_hash["email"], 0 }
+    Database::Connection.exec(
+      "insert into emails (email, frequency) values ($1, $2)",
+      request_hash["email"], 0
     )
   end
 

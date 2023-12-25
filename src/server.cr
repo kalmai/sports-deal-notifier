@@ -2,7 +2,7 @@ require "./initializer"
 require "http/server"
 require "./controller"
 
-module Sports::Deal::Emailer
+module Sports::Deal::Notifier
   VERSION = "0.1.0"
   include Controller
 

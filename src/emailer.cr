@@ -1,11 +1,13 @@
 require "json"
 
-module EmailerA
+module Emailer
   extend self
 
-  def sender(addresses)
-    resp = HTTP::Client.post("https://api.sendgrid.com/v3/mail/send", request_headers, payload("something@gmail.com", "heloworldmao", "hellomehowareyoudoingtodaybruvinitbigben"))
-    puts resp.status
+  def sender(props)
+    props.each do |prop|
+      resp = HTTP::Client.post("https://api.sendgrid.com/v3/mail/send", request_headers, payload(prop))
+      puts resp.status
+    end
   end
 
   def request_headers
@@ -15,12 +17,14 @@ module EmailerA
     }
   end
 
-  def payload(email : String, subject : String, email_body : String)
+  def payload(prop : EmailProperties)
     {
-      personalizations: [{ to: [{ email: email }] }],
-      from: { email: "something@gmail.com"},
-      subject: subject,
-      content: [{ type: "text/plain", value: email_body }]
+      personalizations: [{ to: [{ email: prop.address }] }],
+      from: { email: "host_address@gmail.com"},
+      subject: prop.subject,
+      content: [{ type: "text/plain", value: prop.content }]
     }.to_json
   end
+
+  record EmailProperties, address : String, subject : String, content : String
 end

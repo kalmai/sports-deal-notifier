@@ -1,14 +1,22 @@
 version: 2.0
 shards:
+  cron_parser:
+    git: https://github.com/kostya/cron_parser.git
+    version: 0.4.0
+
   db:
     git: https://github.com/crystal-lang/crystal-db.git
     version: 0.12.0
 
-  email:
-    git: https://github.com/arcage/crystal-email.git
-    version: 0.7.0
+  future:
+    git: https://github.com/crystal-community/future.cr.git
+    version: 1.0.0
 
   pg:
     git: https://github.com/will/crystal-pg.git
     version: 0.27.0
+
+  tasker:
+    git: https://github.com/spider-gazelle/tasker.git
+    version: 2.1.4
 
