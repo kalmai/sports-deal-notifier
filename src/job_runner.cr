@@ -1,9 +1,12 @@
 require "tasker"
 require "./emailer"
+require "./texter"
 
 module JobRunner
   extend self
+
   include Emailer
+  include Texter
 
   start_cron_jobs
 
@@ -14,6 +17,7 @@ module JobRunner
 
   def notify_of_deals
     Emailer.sender(assemble_deals)
+    Texter.sender(assemble_text_deals)
   end
 
   def assemble_deals
@@ -23,6 +27,18 @@ module JobRunner
     rs.each do
       email, freq = rs.read(String, Int32)
       assembled_deals << Emailer::EmailProperties.new(email, "not using this #{freq}", "congratuationas youvewonomg")
+    end
+
+    assembled_deals
+  end
+
+  def assemble_text_deals
+    assembled_deals = [] of Texter::TextProperties
+
+    rs = Database::Connection.query("select * from emails")
+    rs.each do
+      email, freq = rs.read(String, Int32)
+      assembled_deals << Texter::TextProperties.new(email, "congratuationas youvewonomg")
     end
 
     assembled_deals

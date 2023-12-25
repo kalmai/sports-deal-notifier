@@ -22,6 +22,7 @@ module Database
     # db.exec "create table if not exists zip_code_teams"
     # we should have a table with all the teams maybe at some point versus
     db.exec "insert into emails values ($1, $2)", "poodude@gmail.com", 0
+    # db.exec "insert into emails values ($1, $2)", "aphonenumberhere", 0
     puts "database created for '#{ENV.fetch("ENVIRONMENT")}'"
     # refer to https://github.com/crystal-lang/crystal-db#usage for further information
   end

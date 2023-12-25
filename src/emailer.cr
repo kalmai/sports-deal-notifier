@@ -6,7 +6,7 @@ module Emailer
   def sender(props)
     props.each do |prop|
       resp = HTTP::Client.post("https://api.sendgrid.com/v3/mail/send", request_headers, payload(prop))
-      puts resp.status
+      puts resp.status_code
     end
   end
 
@@ -20,7 +20,7 @@ module Emailer
   def payload(prop : EmailProperties)
     {
       personalizations: [{ to: [{ email: prop.address }] }],
-      from: { email: "host_address@gmail.com"},
+      from: { email: ENV.fetch("HOST_EMAIL_ADDRESS")},
       subject: prop.subject,
       content: [{ type: "text/plain", value: prop.content }]
     }.to_json
