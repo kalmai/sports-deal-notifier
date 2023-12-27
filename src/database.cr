@@ -20,17 +20,15 @@ module Database
     # db.exec "create table if not exists zip_code_teams"
     # we should have a table with all the teams maybe at some point versus
 
-    db.exec "drop table emails"
-    db.exec "create table if not exists emails (email text UNIQUE, email_enabled boolean default false)"
-    db.exec "drop table phone_numbers"
-    db.exec "create table if not exists phone_numbers (phone_number varchar(16) UNIQUE, phone_number_enabled boolean default false)"
 
-    db.exec "insert into emails values ($1)", "poodude@gmail.com"
-    db.exec "insert into emails values ($1, $2)", "poogalentity@gmail.com", true
-    db.exec "insert into phone_numbers values ($1)", "1234567890"
-    db.exec "insert into phone_numbers values ($1, $2)", "0987654321", true
-
+    File.read("#{Path[__DIR__]}/create_tables.sql").split("\n").each { |sql| db.exec(sql) }
     puts "database created for '#{ENV.fetch("ENVIRONMENT")}'"
+
+    unless ENV.fetch("ENVIRONMENT") == "prod"
+      File.read("#{Path[__DIR__]}/seed.sql").split("\n").each { |sql| db.exec(sql) }
+      puts "database seeded for '#{ENV.fetch("ENVIRONMENT")}'"
+    end
+
     # refer to https://github.com/crystal-lang/crystal-db#usage for further information
   end
 
