@@ -1,6 +1,7 @@
 require "tasker"
 require "./emailer"
 require "./texter"
+require "./crawler"
 
 module JobRunner
   extend self
@@ -11,8 +12,13 @@ module JobRunner
   start_cron_jobs
 
   def start_cron_jobs
+    crawl_deal_pages
     Tasker.cron("30 5 * * *") { notify_of_deals } # 5:30 machine time
     puts "started cron job runners"
+  end
+
+  def crawl_deal_pages
+    Crawler.crawl_page("https://www.nhl.com/bluejackets/fans/gameday-central#gameday-promotions")
   end
 
   def notify_of_deals

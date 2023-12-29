@@ -12,6 +12,14 @@ shards:
     git: https://github.com/crystal-community/future.cr.git
     version: 1.0.0
 
+  lexbor:
+    git: https://github.com/kostya/lexbor.git
+    version: 3.1.2
+
+  mechanize:
+    git: https://github.com/kanezoh/mechanize.cr.git
+    version: 0.2.0
+
   pg:
     git: https://github.com/will/crystal-pg.git
     version: 0.27.0
