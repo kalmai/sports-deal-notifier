@@ -18,7 +18,9 @@ module JobRunner
   end
 
   def crawl_deal_pages
-    Crawler.crawl_page("https://www.nhl.com/bluejackets/fans/gameday-central#gameday-promotions")
+    # Crawler.crawl_page("https://www.nhl.com/bluejackets/fans/gameday-central#gameday-promotions")
+    Crawler.crawl_teams_from_zip("43026")
+    Crawler.crawl_teams_from_zip("15106")
   end
 
   def notify_of_deals
