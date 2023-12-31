@@ -24,6 +24,10 @@ shards:
     git: https://github.com/will/crystal-pg.git
     version: 0.27.0
 
+  selenium:
+    git: https://github.com/matthewmcgarvey/selenium.cr.git
+    version: 0.12.1
+
   tasker:
     git: https://github.com/spider-gazelle/tasker.git
     version: 2.1.4

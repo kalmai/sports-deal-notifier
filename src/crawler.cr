@@ -1,4 +1,5 @@
 require "mechanize"
+require "selenium"
 
 module Crawler
   extend self
@@ -18,10 +19,29 @@ module Crawler
     puts deals
   end
 
+  def scrape_js_required_sites
+    driver = Selenium::Driver.for(:firefox, base_url: "http://localhost:4444")
+    capabilities = Selenium::Firefox::Capabilities.new
+    capabilities.firefox_options.args = ["-headless"] # if we can just capture the network request it'll be easier than dealing with the html and parsing there...
+    session = driver.create_session(capabilities)
+    page = session.navigate_to("https://www.ballysports.com/")
+    wait = Selenium::Helpers::Wait.new(timeout: 5.seconds, interval: 1.second)
+    element = session.find_element(:css, "input[placeholder=Zipcode]")
+    element.send_keys("43026")
+    session.document_manager.page_source # gets the html to parse, however it may be slow...
+    session.delete
+
+    # Use the wait object to wait until the search results are displayed.
+    # We do this by checking if the element with the CSS selector "#search" is found on the page.
+    # wait.until { session.find_element(:css, "input[placeholder=Zipcode]") }
+    # html = Lexbor::Parser.new(page)
+  end
+
   def crawl_teams_from_zip(zip : String)
-    #page = Agent.get("https://www.ballysports.com/")
-    http_page = HTTP::Client.get("https://ballyrsnfeed.channelfinder.net/?zip=#{zip}")
-    puts http_page.body
+    # page = Agent.get("https://www.ballysports.com/")
+    # puts page.body
+    # puts page.title
+    scrape_js_required_sites
 
     # it looks like bally has their website locked down UNLESS we can bypass the bot detection by loading the page with something like selenium i was reading might help?
     # it also looks like if ballysports via their ballyrsnfeed resource will not display the results IF they cannot provide you a subscription in said area code.
