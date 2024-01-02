@@ -19,7 +19,7 @@ module Crawler
     puts deals
   end
 
-  def scrape_js_required_sites
+  def scrape_js_required_sites(zip : String)
     driver = Selenium::Driver.for(:firefox, base_url: "http://localhost:4444")
     capabilities = Selenium::Firefox::Capabilities.new
     capabilities.firefox_options.args = ["-headless"] # turns out it doesn't live in any response, we want to read the local storage for the data
@@ -29,12 +29,12 @@ module Crawler
     wait = Selenium::Helpers::Wait.new(timeout: 5.seconds, interval: 1.second)
     element = session.find_element(:css, "input[placeholder=Zipcode]")
     # wait = Selenium::Helpers::Wait.new(timeout: 1.seconds, interval: 1.second)
-    element.send_keys("43026")
+    element.send_keys(zip)
     # session.document_manager.page_source # gets the html to parse, however it may be slow...
     storage = session.local_storage_manager.keys # this returns the local storage keys
     storage = session.local_storage_manager.item("userService.currentUser")
-    puts storage
     session.delete
+    storage
 
     # Use the wait object to wait until the search results are displayed.
     # We do this by checking if the element with the CSS selector "#search" is found on the page.
@@ -46,7 +46,7 @@ module Crawler
     # page = Agent.get("https://www.ballysports.com/")
     # puts page.body
     # puts page.title
-    scrape_js_required_sites
+    scrape_js_required_sites(zip)
 
     # it looks like bally has their website locked down UNLESS we can bypass the bot detection by loading the page with something like selenium i was reading might help?
     # it also looks like if ballysports via their ballyrsnfeed resource will not display the results IF they cannot provide you a subscription in said area code.

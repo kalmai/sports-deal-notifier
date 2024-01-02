@@ -19,8 +19,14 @@ module JobRunner
 
   def crawl_deal_pages
     # Crawler.crawl_page("https://www.nhl.com/bluejackets/fans/gameday-central#gameday-promotions")
-    Crawler.crawl_teams_from_zip("43026")
-    Crawler.crawl_teams_from_zip("15106")
+    # Crawler.crawl_teams_from_zip("43026")
+    # Crawler.crawl_teams_from_zip("15106")
+  end
+
+  def find_teams_for_zip(zip : String)
+    # need to save data to our zipcode table in the future and check with db.query later
+    # return db.result if db.result otherwise crawl ballysport for the teams
+    Crawler.crawl_teams_from_zip(zip)
   end
 
   def notify_of_deals
