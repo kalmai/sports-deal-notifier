@@ -22,14 +22,19 @@ module Crawler
   def scrape_js_required_sites(zip : String)
     driver = Selenium::Driver.for(:firefox, base_url: "http://localhost:4444")
     capabilities = Selenium::Firefox::Capabilities.new
-    capabilities.firefox_options.args = ["-headless"] # turns out it doesn't live in any response, we want to read the local storage for the data
+    capabilities.firefox_options.args # = ["-headless"] # turns out it doesn't live in any response, we want to read the local storage for the data
 
     session = driver.create_session(capabilities)
-    page = session.navigate_to("https://www.ballysports.com/")
-    wait = Selenium::Helpers::Wait.new(timeout: 5.seconds, interval: 1.second)
-    element = session.find_element(:css, "input[placeholder=Zipcode]")
+    page = session.navigate_to("https://www.directv.com/sports/regional-sports-locator/")
+    wait = Selenium::Helpers::Wait.new(timeout: 7.seconds, interval: 1.second)
+    begin
+      debugger
+      element = session.find_element(:xpath, "/html/body/div/div/div[1]/div[2]/div/div/div/div[1]/div[1]/label")
+      element.send_keys(zip)
+    rescue ex
+      puts ex.message
+    end
     # wait = Selenium::Helpers::Wait.new(timeout: 1.seconds, interval: 1.second)
-    element.send_keys(zip)
     # session.document_manager.page_source # gets the html to parse, however it may be slow...
     storage = session.local_storage_manager.keys # this returns the local storage keys
     storage = session.local_storage_manager.item("userService.currentUser")

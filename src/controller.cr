@@ -38,10 +38,10 @@ module Controller
 
     # https://forum.crystal-lang.org/t/how-to-dig-for-a-dynamic-json-value/3745/3
     json = Crawler.crawl_teams_from_zip(zip)
-    data = JSON::Parser.new(json).parse
-    all_teams = data["profile"]["region"]["all_regional_teams"].as_a
+    # data = JSON::Parser.new(json).parse
+    # all_teams = data["profile"]["region"]["all_regional_teams"].as_a
 
-    create_teams_for_zip(all_teams)
+    # create_teams_for_zip(all_teams)
   end
 
   def create_teams_for_zip(team_array : Array(JSON::Any))
@@ -53,7 +53,6 @@ module Controller
         team_code: ele["tricode"]
       }
     end
-    debugger
   end
   ###
 
