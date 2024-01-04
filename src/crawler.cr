@@ -21,16 +21,20 @@ module Crawler
 
   def scrape_js_required_sites(zip : String)
     driver = Selenium::Driver.for(:firefox, base_url: "http://localhost:4444")
-    capabilities = Selenium::Firefox::Capabilities.new
-    capabilities.firefox_options.args # = ["-headless"] # turns out it doesn't live in any response, we want to read the local storage for the data
+    capabilities = Selenium::Firefox::Capabilities.new # might be able to capture network requests inside of a proxy
+    capabilities.firefox_options.args = ["-disable_encoding"]# = ["-headless"] # turns out it doesn't live in any response, we want to read the local storage for the data
 
     session = driver.create_session(capabilities)
-    page = session.navigate_to("https://www.directv.com/sports/regional-sports-locator/")
-    wait = Selenium::Helpers::Wait.new(timeout: 7.seconds, interval: 1.second)
+    page = session.navigate_to("https://sports.directv.com/rsinfo")
+    wait = Selenium::Helpers::Wait.new(timeout: 15.seconds, interval: 1.second)
     begin
+      sleep 5
+      element = session.find_element(:tag_name, "input")
+      element.send_keys([zip, :tab])
+      net_data = session.document_manager.execute_script("var network = performance.getEntries() || {}; return network;")
       debugger
-      element = session.find_element(:xpath, "/html/body/div/div/div[1]/div[2]/div/div/div/div[1]/div[1]/label")
-      element.send_keys(zip)
+      # element = session.find_element(:xpath, "/html/body/div/div/div[1]/div[2]/div/div/div/div[1]/div[1]/label")
+      # element.send_keys(zip)
     rescue ex
       puts ex.message
     end
