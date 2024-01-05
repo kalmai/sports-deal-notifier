@@ -31,8 +31,16 @@ module Crawler
       sleep 5
       element = session.find_element(:tag_name, "input")
       element.send_keys([zip, :tab])
-      net_data = session.document_manager.execute_script("var network = performance.getEntries() || {}; return network;")
-      debugger
+      # net_data = session.document_manager.execute_script("var network = performance.getEntries() || {}; return network;")
+      # need to decypher this code and extract it out and make it something useable perhaps:
+      # https://gist.github.com/benjamingr/0433b52559ad61f6746be786525e97e8
+      # issue is that the response we get back from the request that is fired off after tabbing
+      # in selenium is what we want, the stuff presented in the page is nice, but the data provided
+      # from the BE is what i want to scrape. a potential solution is to just take the script above,
+      # deal with JS hell and make it work for capturing the request somehow and returning the data,
+      # OR we can just figure out how to use proxies in the selenium gem and then we will receive the
+      # response and should be able to parse it there. it seems like the shard supports proxies,
+      # i just CBA to spend another day with JS selenium hell. future me, good f***ing luck.
       # element = session.find_element(:xpath, "/html/body/div/div/div[1]/div[2]/div/div/div/div[1]/div[1]/label")
       # element.send_keys(zip)
     rescue ex
@@ -55,7 +63,7 @@ module Crawler
     # page = Agent.get("https://www.ballysports.com/")
     # puts page.body
     # puts page.title
-    scrape_js_required_sites(zip)
+    # scrape_js_required_sites(zip)
 
     # it looks like bally has their website locked down UNLESS we can bypass the bot detection by loading the page with something like selenium i was reading might help?
     # it also looks like if ballysports via their ballyrsnfeed resource will not display the results IF they cannot provide you a subscription in said area code.

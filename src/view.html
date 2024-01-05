@@ -6,16 +6,20 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>sports deal notifier</title>
 		<script>
+      const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
       // should probably look at moving this to a JS file at some point
       function preventFormDefault() {
         document.getElementById("bobby").addEventListener("click", function(event){
           event.preventDefault()
+        console.log("finally up!")
         });
         document.getElementById("bobbysMother").addEventListener("click", function(event){
           event.preventDefault()
+        console.log("finally up!")
         });
         document.getElementById("bobbysFather").addEventListener("click", function(event){
           event.preventDefault()
+        console.log("finally up!")
         });
       }
 
@@ -29,8 +33,9 @@
             "zipcode": newZipcode
           }),
           headers: {
-            "Content-type": "application/json; charset=UTF-8"
-          }
+            "Content-type": "application/json; charset=UTF-8",
+          },
+          mode: "no-cors"
         });
       }
 
@@ -44,7 +49,7 @@
             "zipcode": newZipcode
           }),
           headers: {
-            "Content-type": "application/json; charset=UTF-8"
+            "Content-type": "application/json; charset=UTF-8",
           }
         });
       }

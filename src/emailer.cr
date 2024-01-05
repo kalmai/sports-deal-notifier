@@ -6,6 +6,7 @@ module Emailer
   def sender(props)
     props.each do |prop|
       resp = HTTP::Client.post("https://api.sendgrid.com/v3/mail/send", request_headers, payload(prop))
+      puts prop.address
       puts resp.status_code
     end
   end

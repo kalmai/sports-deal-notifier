@@ -12,7 +12,8 @@ module JobRunner
   start_cron_jobs
 
   def start_cron_jobs
-    crawl_deal_pages
+    # crawl_deal_pages
+    notify_of_deals
     Tasker.cron("30 5 * * *") { notify_of_deals } # 5:30 machine time
     puts "started cron job runners"
   end
@@ -26,21 +27,21 @@ module JobRunner
   def find_teams_for_zip(zip : String)
     # need to save data to our zipcode table in the future and check with db.query later
     # return db.result if db.result otherwise crawl ballysport for the teams
-    Crawler.crawl_teams_from_zip(zip)
+    # Crawler.crawl_teams_from_zip(zip)
   end
 
   def notify_of_deals
     Emailer.sender(assemble_deals)
-    Texter.sender(assemble_text_deals)
+    # Texter.sender(assemble_text_deals)
   end
 
   def assemble_deals
     assembled_deals = [] of Emailer::EmailProperties
 
-    rs = Database::Connection.query("select * from emails")
+    rs = Database::Connection.query("select email from emails where email_enabled = 'true'")
     rs.each do
-      email, freq = rs.read(String, Int32)
-      assembled_deals << Emailer::EmailProperties.new(email, "not using this #{freq}", "congratuationas youvewonomg")
+      email = rs.read(String)
+      assembled_deals << Emailer::EmailProperties.new(email, "subject", "message")
     end
 
     assembled_deals
@@ -49,10 +50,10 @@ module JobRunner
   def assemble_text_deals
     assembled_deals = [] of Texter::TextProperties
 
-    rs = Database::Connection.query("select * from emails")
+    rs = Database::Connection.query("select phone_number from phone_numbers where phone_number_enabled = true")
     rs.each do
-      email, freq = rs.read(String, Int32)
-      assembled_deals << Texter::TextProperties.new(email, "congratuationas youvewonomg")
+      phone_number = rs.read(String)
+      assembled_deals << Texter::TextProperties.new(phone_number, "congratuationas youvewonomg")
     end
 
     assembled_deals
