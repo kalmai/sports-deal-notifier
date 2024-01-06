@@ -7,7 +7,7 @@ module Sports::Deal::Notifier
   VERSION = "0.1.0"
   include Controller
 
-  server = HTTP::Server.new([CustomHandler.new]) do |context|
+  server = HTTP::Server.new([CorsHandler.new]) do |context|
     Controller.parse_request(context)
   end
 
@@ -17,13 +17,12 @@ module Sports::Deal::Notifier
 end
 
 
-class CustomHandler
+class CorsHandler
   include HTTP::Handler
 
   def call(context)
     context.response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     context.response.headers["Access-Control-Allow-Origin"] = "*"
-    puts "Doing some stuff"
     call_next(context)
   end
 end

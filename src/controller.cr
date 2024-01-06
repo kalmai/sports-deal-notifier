@@ -23,7 +23,6 @@ module Controller
   def register_email(context)
     request_hash = request_hash(context)
     zipcode_id = find_zipcode_id(request_hash["zipcode"]) # we will use this for the user eventually
-    debugger
     Database::Connection.exec("insert into emails (email, email_enabled) values ($1, $2)", request_hash["email"], true)
     JobRunner.notify_of_deals
   end
