@@ -23,14 +23,14 @@ module Controller
   def register_email(context)
     request_hash = request_hash(context)
     zipcode_id = find_zipcode_id(request_hash["zipcode"]) # we will use this for the user eventually
-    Database::Connection.exec("insert into emails (email, email_enabled) values ($1, $2)", request_hash["email"], true)
+    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "email",request_hash["email"], true)
     JobRunner.notify_of_deals
   end
 
   def register_phone_number(context)
     request_hash = request_hash(context)
     zipcode_id = find_zipcode_id(request_hash["zipcode"]) # we will use this for the user eventually
-    Database::Connection.exec("insert into phone_numbers (phone_number) values ($1)", request_hash["phone_number"])
+    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "phone_number",request_hash["phone_number"], true)
   end
 
   def find_zipcode_id(zip : String)

@@ -38,7 +38,7 @@ module JobRunner
   def assemble_deals
     assembled_deals = [] of Emailer::EmailProperties
 
-    rs = Database::Connection.query("select email from emails where email_enabled = 'true'")
+    rs = Database::Connection.query("select contact_detail from contact_method where contact_type = 'email' and enabled = true")
     rs.each do
       email = rs.read(String)
       assembled_deals << Emailer::EmailProperties.new(email, "subject", "message")
@@ -50,7 +50,7 @@ module JobRunner
   def assemble_text_deals
     assembled_deals = [] of Texter::TextProperties
 
-    rs = Database::Connection.query("select phone_number from phone_numbers where phone_number_enabled = true")
+    rs = Database::Connection.query("select contact_detail from contact_method where contact_type = 'phone_number' and enabled = true")
     rs.each do
       phone_number = rs.read(String)
       assembled_deals << Texter::TextProperties.new(phone_number, "congratuationas youvewonomg")
