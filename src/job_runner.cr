@@ -13,7 +13,7 @@ module JobRunner
 
   def start_cron_jobs
     # crawl_deal_pages
-    notify_of_deals
+    # notify_of_deals
     Tasker.cron("30 5 * * *") { notify_of_deals } # 5:30 machine time
     puts "started cron job runners"
   end
@@ -38,7 +38,7 @@ module JobRunner
   def assemble_deals
     assembled_deals = [] of Emailer::EmailProperties
 
-    rs = Database::Connection.query("select contact_detail from contact_method where contact_type = 'email' and enabled = true")
+    rs = Database::Connection.query("select contact_detail from contact_method (select * from contact_method where contact_type = 'email') where enabled = true")
     rs.each do
       email = rs.read(String)
       assembled_deals << Emailer::EmailProperties.new(email, "subject", "message")
