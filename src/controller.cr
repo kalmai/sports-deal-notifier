@@ -18,19 +18,19 @@ module Controller
     end
   end
 
-  ### should probably break out the registration stuff to its own class or something...
+  # ## should probably break out the registration stuff to its own class or something...
   # should probably collapse these methods into one and add a checkbox on the FE to allow them to choose one/both?
   def register_email(context)
     request_hash = request_hash(context)
     zipcode_id = find_zipcode_id(request_hash["zipcode"]) # we will use this for the user eventually
-    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "email",request_hash["email"], true)
+    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "email", request_hash["email"], true)
     JobRunner.notify_of_deals
   end
 
   def register_phone_number(context)
     request_hash = request_hash(context)
     zipcode_id = find_zipcode_id(request_hash["zipcode"]) # we will use this for the user eventually
-    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "phone_number",request_hash["phone_number"], true)
+    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "phone_number", request_hash["phone_number"], true)
   end
 
   def find_zipcode_id(zip : String)
@@ -48,13 +48,14 @@ module Controller
   def create_teams_for_zip(team_array : Array(JSON::Any))
     mapped_data = team_array.map do |ele|
       {
-        league: ele["league"],
-        long_name: ele["team"],
+        league:     ele["league"],
+        long_name:  ele["team"],
         short_name: ele["short_name"],
-        team_code: ele["tricode"]
+        team_code:  ele["tricode"],
       }
     end
   end
+
   ###
 
   # the below should probably stay here
@@ -70,7 +71,6 @@ module Controller
   def health(context)
     context.response.content_type = "text/plain"
     context.response.print("Hello world! The time is #{Time.local}")
-
   end
 
   def request_hash(context) : Hash

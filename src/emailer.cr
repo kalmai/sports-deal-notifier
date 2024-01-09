@@ -14,16 +14,16 @@ module Emailer
   def request_headers
     HTTP::Headers{
       "Authorization" => "Bearer #{ENV.fetch("SEND_GRID_API_KEY")}",
-      "Content-Type" => "application/json"
+      "Content-Type"  => "application/json",
     }
   end
 
   def payload(prop : EmailProperties)
     {
-      personalizations: [{ to: [{ email: prop.address }] }],
-      from: { email: ENV.fetch("HOST_EMAIL_ADDRESS")},
-      subject: prop.subject,
-      content: [{ type: "text/plain", value: prop.content }]
+      personalizations: [{to: [{email: prop.address}]}],
+      from:             {email: ENV.fetch("HOST_EMAIL_ADDRESS")},
+      subject:          prop.subject,
+      content:          [{type: "text/plain", value: prop.content}],
     }.to_json
   end
 

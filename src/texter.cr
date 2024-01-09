@@ -19,7 +19,7 @@ module Texter
   end
 
   def request_headers
-    HTTP::Headers { "Content-Type" => "application/x-www-form-urlencoded" }
+    HTTP::Headers{"Content-Type" => "application/x-www-form-urlencoded"}
   end
 
   def payload(prop : TextProperties)

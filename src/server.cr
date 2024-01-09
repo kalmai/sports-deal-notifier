@@ -16,7 +16,6 @@ module Sports::Deal::Notifier
   server.listen
 end
 
-
 class CorsHandler
   include HTTP::Handler
 

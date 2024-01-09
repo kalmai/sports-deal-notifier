@@ -1,17 +1,20 @@
 require "db"
 require "pg"
+require "./seeder"
 
 module Database
   extend self
 
+  include Seeder
+
   Connection = DB.open(database_connection)
 
   DB.open(database_connection) do |db|
-    File.read("#{Path[__DIR__]}/create_tables.sql").split("\n").each { |sql| db.exec(sql) }
+    Seeder.create_database
     puts "database created for '#{ENV.fetch("ENVIRONMENT")}'"
 
     unless ENV.fetch("ENVIRONMENT") == "prod"
-      File.read("#{Path[__DIR__]}/seed.sql").split("\n").each { |sql| db.exec(sql) }
+      Seeder.seed_local_env
       puts "database seeded for '#{ENV.fetch("ENVIRONMENT")}'"
     end
 

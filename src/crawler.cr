@@ -8,21 +8,21 @@ module Crawler
 
   def crawl_blue_jackets_page(url : String)
     page = Agent.get(url)
-#     <div class="nhl-c-card__content">
-#      <div class="fa-text fa-text--fulldescription">
-#        <h3 class="fa-text__title">Tim Hortons We Win, You Win!</h3>
-#        <div class="fa-text__body"><p>When the Blue Jackets win at home, fans can get a free coffee! Just show the social media post at Tim Hortons to redeem!</p>
-#
-#<p><strong>Offer valid the next day at participating Ohio Tim Hortons locations</strong></p>
-#</div>https://www.nhl.com/bluejackets/fans/gameday-central#gameday-promotions
+    #     <div class="nhl-c-card__content">
+    #      <div class="fa-text fa-text--fulldescription">
+    #        <h3 class="fa-text__title">Tim Hortons We Win, You Win!</h3>
+    #        <div class="fa-text__body"><p>When the Blue Jackets win at home, fans can get a free coffee! Just show the social media post at Tim Hortons to redeem!</p>
+    #
+    # <p><strong>Offer valid the next day at participating Ohio Tim Hortons locations</strong></p>
+    # </div>https://www.nhl.com/bluejackets/fans/gameday-central#gameday-promotions
     deals = page.css(%q{.nhl-c-card__content div div}).map(&.to_html).to_a
     puts deals
   end
 
   def scrape_js_required_sites(zip : String)
     driver = Selenium::Driver.for(:firefox, base_url: "http://localhost:4444")
-    capabilities = Selenium::Firefox::Capabilities.new # might be able to capture network requests inside of a proxy
-    capabilities.firefox_options.args = ["-disable_encoding"]# = ["-headless"] # turns out it doesn't live in any response, we want to read the local storage for the data
+    capabilities = Selenium::Firefox::Capabilities.new        # might be able to capture network requests inside of a proxy
+    capabilities.firefox_options.args = ["-disable_encoding"] # = ["-headless"] # turns out it doesn't live in any response, we want to read the local storage for the data
 
     session = driver.create_session(capabilities)
     page = session.navigate_to("https://sports.directv.com/rsinfo")
@@ -69,9 +69,9 @@ module Crawler
     # it also looks like if ballysports via their ballyrsnfeed resource will not display the results IF they cannot provide you a subscription in said area code.
     # a solution might be to just use wikipedia? they have a page https://en.wikipedia.org/wiki/Sports_in_Ohio which lists all the major sports teams in a nice table, might already be a dependency which maps zip codes to states for crystal and then all we need to do is parse the table and store the state and team. f*** bally
 
-    #puts page.body
-    #form = page.css("input").to_a
-    #puts form
+    # puts page.body
+    # form = page.css("input").to_a
+    # puts form
 
     # placeholder="Zipcode"
     # form.field_with("email").value = "tester@example.com"
@@ -80,4 +80,3 @@ module Crawler
 
   end
 end
-
