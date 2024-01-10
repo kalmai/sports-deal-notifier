@@ -11,26 +11,23 @@ module Controller
       return root(context)
     when "/health"
       return health(context)
-    when "/register_email"
-      return register_email(context)
-    when "/register_phone_number"
-      return register_phone_number(context)
+    when "/register"
+      return register(context)
     end
   end
 
   # ## should probably break out the registration stuff to its own class or something...
   # should probably collapse these methods into one and add a checkbox on the FE to allow them to choose one/both?
-  def register_email(context)
-    request_hash = request_hash(context)
-    zipcode_id = find_zipcode_id(request_hash["zipcode"]) # we will use this for the user eventually
-    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "email", request_hash["email"], true)
+  def register(context)
+    p! request_hash = request_hash(context)
+    # zipcode_id = find_zipcode_id(request_hash["zipcode"].as_s) # we will use this for the user eventually
+    contact_methods = [] of String# request_hash["contact_methods"].as_a.map do |set|
+    debugger
+    # Hash(String, String).from_json(body.to_s)
+    contact_methods.each do |key|
+      Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", key, "", true)
+    end
     JobRunner.notify_of_deals
-  end
-
-  def register_phone_number(context)
-    request_hash = request_hash(context)
-    zipcode_id = find_zipcode_id(request_hash["zipcode"]) # we will use this for the user eventually
-    Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", "phone_number", request_hash["phone_number"], true)
   end
 
   def find_zipcode_id(zip : String)
@@ -73,8 +70,8 @@ module Controller
     context.response.print("Hello world! The time is #{Time.local}")
   end
 
-  def request_hash(context) : Hash
+  def request_hash(context)
     body = context.request.body.try(&.gets_to_end)
-    Hash(String, String).from_json(body.to_s)
+    # JSON::Parser.new(body.to_s).parse
   end
 end

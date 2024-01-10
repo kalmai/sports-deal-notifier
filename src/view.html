@@ -6,32 +6,17 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>sports deal notifier</title>
 		<script>
-      const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
-      // should probably look at moving this to a JS file at some point
       function preventFormDefault() {
-        document.getElementById("bobby").addEventListener("click", function(event){
+        document.getElementById("submitRegisterForm").addEventListener("click", function(event){
           event.preventDefault()
-        console.log("finally up!")
-        });
-        document.getElementById("bobbysMother").addEventListener("click", function(event){
-          event.preventDefault()
-        console.log("finally up!")
-        });
-        document.getElementById("bobbysFather").addEventListener("click", function(event){
-          event.preventDefault()
-        console.log("finally up!")
         });
       }
 
-      async function submitEmail() {
-        let newEmail = new FormData(document.querySelector("form[name='emailForm']")).get("email")
-        let newZipcode = new FormData(document.querySelector("form[name='zipcodeForm']")).get("zipcode")
-        let response = await fetch("http://localhost:8080/register_email", {
+      async function registerNewUser() {
+        let newUserData = Object.fromEntries(new FormData(document.querySelector("form[name='registerForm']")).entries())
+        let response = await fetch("http://localhost:8080/register", {
           method: "POST",
-          body: JSON.stringify({
-            "email": newEmail,
-            "zipcode": newZipcode
-          }),
+          body: JSON.stringify(formatFormData(newUserData)),
           headers: {
             "Content-type": "application/json; charset=UTF-8",
           },
@@ -39,36 +24,38 @@
         });
       }
 
-      async function submitPhoneNumber() {
-        let newPhoneNumber = new FormData(document.querySelector("form[name='phoneNumberForm']")).get("phone_number")
-        let newZipcode = new FormData(document.querySelector("form[name='zipcodeForm']")).get("zipcode")
-        let response = await fetch("http://localhost:8080/register_phone_number", {
-          method: "POST",
-          body: JSON.stringify({
-            "phone_number": newPhoneNumber,
-            "zipcode": newZipcode
-          }),
-          headers: {
-            "Content-type": "application/json; charset=UTF-8",
+      function formatFormData(data) {
+        console.log(data)
+        const contact_method_types = ['email', 'phone_number']
+        let result = {}
+        let contact_data = []
+
+        for (const [key, value] of Object.entries(data)) {
+          if (contact_method_types.includes(key)) {
+            if (data[key].length > 0) {
+              // this is why i'll never like js
+              contact_data.push({ [key] : value })
+            }
+          } else {
+            result[key] = value
           }
-        });
+        }
+        result['contact_methods'] = contact_data
+        return result
       }
     </script>
   </head>
   <body onload=preventFormDefault()>
-    <form name="zipcodeForm">
+    <form name="registerForm">
       <label for="zipcode">zipcode:</label><br>
       <input type="text" id="zipcode" name="zipcode"><br>
-    </form>
-    <form name="emailForm">
+    <form name="registerForm2">
       <label for="email">email:</label><br>
       <input type="text" id="email" name="email"><br>
-      <input type="submit" value="Submit" id="bobby" onClick=submitEmail()>
-    </form>
-    <form name="phoneNumberForm">
       <label for="phone_number">phone number:</label><br>
       <input type="text" id="phone_number" name="phone_number"><br>
-      <input type="submit" value="Submit" id="bobbysMother" onClick=submitPhoneNumber()>
+      <input type="submit" value="Submit" id="submitRegisterForm" onClick=registerNewUser()>
+    </form>
     </form>
   </body>
 </html>
