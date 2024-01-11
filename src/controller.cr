@@ -22,8 +22,12 @@ module Controller
     p! request_hash = request_hash(context)
     # zipcode_id = find_zipcode_id(request_hash["zipcode"].as_s) # we will use this for the user eventually
     contact_methods = [] of String# request_hash["contact_methods"].as_a.map do |set|
+    contact_hash = JSON.parse(request_hash.to_s)["contact_methods"].as_a.map(&.as_h).map do |k|
+      {(k.keys.first) => k[k.keys.first].as_s}
+    end
     debugger
     # Hash(String, String).from_json(body.to_s)
+    # today we learned that it's easier to just work with tuples than hashes in crystal lang?
     contact_methods.each do |key|
       Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", key, "", true)
     end
