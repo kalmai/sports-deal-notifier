@@ -1,3 +1,5 @@
+require "json"
+
 module Controller
   extend self
 
@@ -21,17 +23,14 @@ module Controller
   def register(context)
     p! request_hash = request_hash(context)
     # zipcode_id = find_zipcode_id(request_hash["zipcode"].as_s) # we will use this for the user eventually
-    contact_methods = [] of String# request_hash["contact_methods"].as_a.map do |set|
-    contact_hash = JSON.parse(request_hash.to_s)["contact_methods"].as_a.map(&.as_h).map do |k|
-      {(k.keys.first) => k[k.keys.first].as_s}
+    contacts = JSON.parse request_hash.to_s
+    new_contact_methods = Array(NewContactMethod).from_json contacts["contact_methods"].to_json
+    new_contact_methods.each do |method|
+      Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", method.contact_type, method.contact_details, method.enabled)
     end
-    debugger
-    # Hash(String, String).from_json(body.to_s)
-    # today we learned that it's easier to just work with tuples than hashes in crystal lang?
-    contact_methods.each do |key|
-      Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", key, "", true)
-    end
-    JobRunner.notify_of_deals
+    # record(NewContactMethod, t : String, detail : String, enabled : Bool)
+    #  aas = Array(NewContactMethod).from_json(request_hash.to_s)
+    # JobRunner.notify_of_deals
   end
 
   def find_zipcode_id(zip : String)
@@ -77,5 +76,16 @@ module Controller
   def request_hash(context)
     body = context.request.body.try(&.gets_to_end)
     # JSON::Parser.new(body.to_s).parse
+  end
+
+  struct NewContactMethod
+    include JSON::Serializable
+    getter contact_type : String
+    getter contact_details : String
+    getter enabled : Bool
+
+    @contact_type : String
+    @contact_details : String
+    @enabled : Bool
   end
 end
