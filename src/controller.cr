@@ -24,19 +24,21 @@ module Controller
     request_hash = request_hash(context)
     contacts = JSON.parse request_hash.to_s
     zipcode_id = find_zipcode_id(contacts["zipcode"].as_s) # we will use this for the user eventually
+    new_contact_id = nil
     new_contact_methods = Array(NewContactMethod).from_json contacts["contact_methods"].to_json
     new_contact_methods.each do |method|
-      Database::Connection.exec("insert into contact_method (contact_type, contact_detail, enabled) values ($1, $2, $3)", method.contact_type, method.contact_details, method.enabled)
+      DB.connect(Database.database_connection) do |conn|
+        rs = conn.query("select nextval(pg_get_serial_sequence('contact_method', 'id'))")
+        rs.each { new_contact_id = rs.read(Int) }
+        conn.exec("insert into contact_method (id, contact_type, contact_detail, enabled) values ($1, $2, $3, $4)", new_contact_id, method.contact_type, method.contact_details, method.enabled)
+      end
     end
-    debugger
-    # record(NewContactMethod, t : String, detail : String, enabled : Bool)
-    #  aas = Array(NewContactMethod).from_json(request_hash.to_s)
+    # this doesn't work TODO:
+    # Database::Connection.exec("insert into users (contact_method_id, address_id) values ($1, $2)", new_contact_id, zipcode_id)
     # JobRunner.notify_of_deals
   end
 
   def find_zipcode_id(zip : String)
-    # need to save data to our zipcode table in the future and check with db.query later
-    # dont execute below if db.result otherwise crawl ballysport for the teams
     zip_id = nil
     rs = Database::Connection.query("select id, zipcode from address where zipcode = ($1)", zip)
     rs.each do
@@ -45,14 +47,17 @@ module Controller
 
     return zip_id if zip_id
 
-    zip_id = Database::Connection.exec("insert into address (zipcode) values ($1)", zip)
-    debugger
-    # https://forum.crystal-lang.org/t/how-to-dig-for-a-dynamic-json-value/3745/3
+    DB.connect(Database.database_connection) do |conn|
+      rs = conn.query("select nextval(pg_get_serial_sequence('address', 'id'))")
+      rs.each { zip_id = rs.read(Int) }
+      conn.exec("insert into address (zipcode) values ($1)", zip)
+    end
     json = Crawler.crawl_teams_from_zip(zip)
     # data = JSON::Parser.new(json).parse
     # all_teams = data["profile"]["region"]["all_regional_teams"].as_a
 
     # create_teams_for_zip(all_teams)
+    zip_id
   end
 
   def create_teams_for_zip(team_array : Array(JSON::Any))

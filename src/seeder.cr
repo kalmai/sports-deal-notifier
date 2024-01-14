@@ -6,7 +6,7 @@ module Seeder
       conn.exec("drop table if exists contact_method cascade")
       conn.exec("create table if not exists contact_method (id serial primary key, contact_type varchar(20), contact_detail varchar(100) UNIQUE, enabled boolean default false)")
       conn.exec("drop table if exists address cascade")
-      conn.exec("create table if not exists address (id serial primary key, zipcode varchar(15))")
+      conn.exec("create table if not exists address (id serial primary key, zipcode varchar(15) UNIQUE)")
       conn.exec("drop table if exists users cascade")
       conn.exec("create table if not exists users (id serial primary key, contact_method_id integer, address_id integer, constraint fk_contact_method foreign key(contact_method_id) references contact_method(id), constraint fk_address_users foreign key(address_id) references address(id))")
       conn.exec("drop table if exists promotion cascade")
