@@ -47,6 +47,8 @@ when you wanna get insides of the db, execute the following future me:
 sudo --login --user=postgres
 psql -h localhost -p 5432 -U postgres -d sports_deal_emailer_dev
 ```
+
+some good engineers i've had the pleasure to work with in the past have told me that "if it already exists, use it". learning the basics with this application up to this point have been valueble for an introduction to crystal lang, however there are some short comings that i hope to acheive by migrating to an existing framework where smarter people than i have already solved some frustrations i've found myself struggling with with minimal dependencies. probably gonna try amber first and if that goes well skip kemal.
 ## Contributing
 
 1. Fork it (<https://github.com/your-github-user/sports-deal-emailer/fork>)
